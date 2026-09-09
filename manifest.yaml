@@ -1,0 +1,254 @@
+# manifest.yaml
+#
+# Single source of truth mapping database objects to the Flyway project that
+# owns them, and (for tables in InData) whether they are part of the
+# merge-replicated pool. Mirrors the client's own manifest file (checked
+# into their GitHub repo, manually maintained), which decides how a script
+# is deployed across their two-node production estate.
+#
+# Used by CLAUDE.md to route a developer's change to the correct project,
+# and (for InData tables) to the correct migrations subfolder. When a new
+# object is created and its classification isn't obvious, ask the developer
+# which bucket it belongs to, then add it here.
+
+projects:
+  incode:
+    description: >
+      Stored procedures, functions and other code-only objects. Contains no
+      tables. In production, deployed identically to both nodes on every
+      release, independent of replication.
+    deploy_targets: [A, B]
+    objects:
+      - type: procedure
+        name: dbo.usp_GetActiveAgents
+      - type: procedure
+        name: dbo.usp_UpdateAgentHeartbeat
+      - type: procedure
+        name: dbo.usp_GetAgentGroupSummary
+      - type: procedure
+        name: dbo.usp_CreateAgent
+      - type: procedure
+        name: dbo.usp_DeactivateAgent
+      - type: procedure
+        name: dbo.usp_AssignAgentToGroup
+      - type: procedure
+        name: dbo.usp_GetCustomerById
+      - type: procedure
+        name: dbo.usp_UpsertCustomer
+      - type: procedure
+        name: dbo.usp_ListLicensesForCustomer
+      - type: procedure
+        name: dbo.usp_GrantLicense
+      - type: procedure
+        name: dbo.usp_RevokeLicense
+      - type: procedure
+        name: dbo.usp_GetAgentSkills
+      - type: procedure
+        name: dbo.usp_AssignSkillToAgent
+      - type: procedure
+        name: dbo.usp_ListSitesForRegion
+      - type: procedure
+        name: dbo.usp_GetContractsForCustomer
+      - type: procedure
+        name: dbo.usp_UpdateContractStatus
+      - type: procedure
+        name: dbo.usp_GetServiceTierById
+      - type: procedure
+        name: dbo.usp_ListRegions
+      - type: procedure
+        name: dbo.usp_GetAgentGroupMembers
+      - type: procedure
+        name: dbo.usp_SearchAgentsByName
+      - type: function
+        name: dbo.fn_IsAgentLicensed
+      - type: function
+        name: dbo.fn_GetAgentDisplayName
+      - type: function
+        name: dbo.fn_CustomerHasActiveContract
+      - type: function
+        name: dbo.fn_LicenseIsExpired
+      - type: function
+        name: dbo.fn_ContractDaysRemaining
+      - type: function
+        name: dbo.fn_AgentSkillLevel
+      - type: function
+        name: dbo.fn_FormatPhoneNumber
+      - type: function
+        name: dbo.fn_ServiceTierPriority
+      - type: function
+        name: dbo.fn_RegionCode
+      - type: function
+        name: dbo.fn_AgentGroupSize
+
+  indata:
+    description: >
+      All tables that live on the InData database in production, whether
+      they are part of the merge-replicated pool or not. One Flyway project
+      because in production these are the same physical database, and in
+      dev there is only one database, no A/B split simulated.
+
+      The per-object `replicated` flag is the routing signal:
+
+        - replicated: true  -> migrations/ReplTables. In production these
+          get deployed to whichever node is currently primary; SQL Server
+          merge replication propagates the change to the secondary. Changes
+          here are the ones limited to twice-yearly releases in production
+          because they trigger a full replication rebuild.
+        - replicated: false -> migrations/NonReplTables. In production these
+          get deployed directly and identically to both nodes on every
+          release. Routine cadence.
+
+      Downstream CLI automation reads this flag to decide which
+      subfolder a generated migration script lands in, don't remove the
+      flag from any entry.
+
+      Note: the client's own naming convention for "which node" a table is
+      "on" is inconsistent, so historical names like ActiveNodeConfig or
+      PassiveNodeHealthCheck should not be taken as evidence that a table
+      is node-scoped. The `replicated` flag here is authoritative, the
+      names are not.
+    deploy_targets: [A, B]
+    objects:
+      - type: table
+        name: dbo.Agents
+        replicated: true
+      - type: table
+        name: dbo.AgentGroups
+        replicated: true
+      - type: table
+        name: dbo.Customers
+        replicated: true
+      - type: table
+        name: dbo.Licenses
+        replicated: true
+      - type: table
+        name: dbo.Sites
+        replicated: true
+      - type: table
+        name: dbo.Regions
+        replicated: true
+      - type: table
+        name: dbo.Skills
+        replicated: true
+      - type: table
+        name: dbo.AgentSkills
+        replicated: true
+      - type: table
+        name: dbo.ServiceTiers
+        replicated: true
+      - type: table
+        name: dbo.CustomerContracts
+        replicated: true
+      - type: table
+        name: dbo.ActiveNodeJobQueue
+        replicated: false
+      - type: table
+        name: dbo.ReplicationWatermark
+        replicated: false
+      - type: table
+        name: dbo.LocalIngestStaging
+        replicated: false
+      - type: table
+        name: dbo.ActiveCallSessions
+        replicated: false
+      - type: table
+        name: dbo.AgentPresence
+        replicated: false
+      - type: table
+        name: dbo.RoutingDecisionCache
+        replicated: false
+      - type: table
+        name: dbo.IngestErrorQueue
+        replicated: false
+      - type: table
+        name: dbo.ActiveNodeConfig
+        replicated: false
+      - type: table
+        name: dbo.ActiveNodeMetrics
+        replicated: false
+      - type: table
+        name: dbo.IngestBatchLog
+        replicated: false
+      - type: table
+        name: dbo.PassiveNodeHealthCheck
+        replicated: false
+      - type: table
+        name: dbo.FailoverReadinessLog
+        replicated: false
+      - type: table
+        name: dbo.LocalReportCache
+        replicated: false
+      - type: table
+        name: dbo.PassiveNodeConfig
+        replicated: false
+      - type: table
+        name: dbo.ReportSchedule
+        replicated: false
+      - type: table
+        name: dbo.ReportRunHistory
+        replicated: false
+      - type: table
+        name: dbo.DailyAgentActivityRollup
+        replicated: false
+      - type: table
+        name: dbo.HistoricalCallSummary
+        replicated: false
+      - type: table
+        name: dbo.LicenseAuditSnapshot
+        replicated: false
+      - type: table
+        name: dbo.WarmStandbyProbeLog
+        replicated: false
+      - type: table
+        name: dbo.ReplicatingTable
+        replicated: true
+      - type: table
+        name: dbo.NonReplicatingTable
+        replicated: false
+
+out_of_scope:
+  - name: InDialerData
+    reason: >
+      Confirmed to exist as a separate physical database (merge-replicated,
+      same as InData), but its internal structure (does it have its own
+      replicated/non-replicated split) has not been investigated. Explicitly
+      out of scope for this POC. Don't build projects for it without first
+      getting the same answers that shaped incode/indata: is it a uniform
+      bucket or a mix, and is there a manifest entry or naming convention
+      for it.
+  - name: Data warehouse (DW)
+    reason: >
+      Separate from Core, runs on SQL Server Always On availability
+      groups, no A/B merge replication complexity. Out of scope for this
+      POC. Would follow the same pattern if brought in later, likely
+      simpler than Core since Always On replicates automatically.
+
+notes:
+  - >
+    Replication is now configured on Huxley's dev box for the "CL1"
+    client only (CoreInData_A publisher, CoreInData_B subscriber, merge
+    replication with 11 articles matching the replicated: true entries
+    here). The setup script is local, not in the repo. A parallel "RG"
+    client (Redgate_CoreInData_NodeA / NodeB) exists without
+    replication for testing routing without merge-repl side effects.
+    See CLAUDE.md's Environments section for full detail. The dev
+    database itself (CoreInData_Dev) is still plain, standalone, with
+    all InData tables in it — replication only affects the prod nodes.
+  - >
+    Deployment strategy is migrations-based (flyway migrate / undo), not
+    state-based (prepare / deploy). Developer-side authoring still uses
+    diff / model / generate against each project's own schema model.
+  - >
+    This is a synthetic, illustrative schema, not the client's real table
+    list. The client has agreed to share a sample of their real manifest
+    file. Swap these entries for it once received, the structure of this
+    file does not need to change.
+  - >
+    A and B are not fixed, stable labels in the client's real environment.
+    Which physical node is "active" versus "passive" can differ by
+    database and even by cluster parity. Treat A/B here as relative roles
+    for a single cluster's production simulation, not a global identity,
+    before this goes anywhere near real replication modelling. Table names
+    like ActiveNodeConfig or PassiveNodeHealthCheck are historical from
+    the client and do NOT imply the table is node-scoped, trust the
+    `replicated` flag, not the name.

@@ -1,0 +1,9 @@
+
+# Flyway ignores
+*.user.toml
+*.artifact
+report.html
+report.json
+
+# Per-run check reports (timestamped HTML, written by Deploy-*.ps1)
+reports/

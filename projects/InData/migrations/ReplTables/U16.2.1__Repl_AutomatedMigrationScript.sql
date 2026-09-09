@@ -1,0 +1,14 @@
+﻿SET NUMERIC_ROUNDABORT OFF
+GO
+SET ANSI_PADDING, ANSI_WARNINGS, CONCAT_NULL_YIELDS_NULL, ARITHABORT, QUOTED_IDENTIFIER, ANSI_NULLS ON
+GO
+PRINT N'Dropping [dbo].[ReplicatingTable]'
+GO
+DROP TABLE [dbo].[ReplicatingTable]
+GO
+PRINT N'Altering [dbo].[Agents]'
+GO
+ALTER TABLE [dbo].[Agents] DROP
+COLUMN [ReplicatingColumnChange03]
+GO
+

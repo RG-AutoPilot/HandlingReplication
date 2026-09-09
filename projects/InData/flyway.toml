@@ -1,0 +1,148 @@
+databaseType = "SqlServer"
+id = "f7338f9a-70f1-4adb-8eb7-80add2fcdb55"
+name = "CoreInData"
+
+[flyway]
+callbackLocations = [ "filesystem:callbacks" ]
+defaultSchema = "dbo"
+errorOverrides = [ "S0001:0:I-" ]
+locations = [ "filesystem:migrations" ]
+mixed = true
+outOfOrder = true
+schemaModelLocation = "schema-model"
+validateMigrationNaming = true
+ignoreMigrationPatterns = [ "*:missing", "*:future" ]
+
+[flyway.sqlserver.clean]
+mode = "all"
+
+  [flyway.check]
+  deployedSnapshot = "snapshotHistory:current"
+
+  [flyway.migrate]
+  saveSnapshot = true
+
+[flywayDesktop]
+enableMigrations = true
+developmentEnvironment = "development"
+shadowEnvironment = "shadow"
+
+  [flywayDesktop.generate]
+  undoScripts = false
+
+[redgateCompare]
+filterFile = "filter.rgf"
+
+  [redgateCompare.sqlserver]
+  filterFile = "Filter.scpf"
+
+[redgateCompare.sqlserver.options.behavior]
+addCreateOrAlterForRerunnableScripts = false
+addDropAndCreateForRerunnableScripts = false
+addNoPopulationToFulltextIndexes = false
+addObjectExistenceChecks = false
+addOnlineOnWhenCreatingIndexesOrAlteringColumns = false
+addWithEncryption = false
+considerNextFilegroupInPartitionSchemes = true
+decryptEncryptedObjects = true
+disableAutoColumnMapping = false
+dontUseAlterAssemblyToChangeClrObjects = false
+forbidDuplicateTableStorageSettings = false
+forceColumnOrder = false
+ignoreMigrationScripts = false
+includeDependencies = true
+includeRoleExistenceChecks = true
+includeSchemaExistenceChecks = true
+inlineFulltextFields = false
+inlineTableObjects = false
+useCaseSensitiveObjectDefinition = false
+useDatabaseCompatibilityLevel = false
+useSetStatementsInScriptDatabaseInfo = false
+writeAssembliesAsDlls = false
+
+[redgateCompare.sqlserver.options.ignores]
+ignoreAuthorizationOnSchemaObjects = false
+ignoreBindings = false
+ignoreChangeTracking = false
+ignoreCollations = true
+ignoreComments = false
+ignoreDataCompression = true
+ignoreDataSyncSchema = false
+ignoreDatabaseAndServerNameInSynonyms = true
+ignoreDmlTriggers = false
+ignoreDynamicDataMasking = false
+ignoreEventNotificationsOnQueues = false
+ignoreExtendedProperties = false
+ignoreFileGroupsPartitionSchemesAndPartitionFunctions = true
+ignoreFillFactorAndIndexPadding = true
+ignoreFullTextIndexing = false
+ignoreIdentitySeedAndIncrementValues = false
+ignoreIndexes = false
+ignoreInsteadOfTriggers = false
+ignoreInternallyUsedMicrosoftExtendedProperties = false
+ignoreLockPropertiesOfIndexes = false
+ignoreNocheckAndWithNocheck = false
+ignoreNotForReplication = true
+ignoreNullabilityOfColumns = false
+ignorePerformanceIndexes = false
+ignorePermissions = false
+ignoreReplicationTriggers = true
+ignoreSchemas = false
+ignoreSensitivityClassifications = false
+ignoreSetQuotedIdentifierAndSetAnsiNullsStatements = false
+ignoreSquareBracketsInObjectNames = false
+ignoreStatistics = true
+ignoreStatisticsIncremental = false
+ignoreStatisticsNoRecomputePropertyOnIndexes = false
+ignoreSystemNamedConstraintAndIndexNames = false
+ignoreTsqltFrameworkAndTests = true
+ignoreUserProperties = true
+ignoreUsersPermissionsAndRoleMemberships = true
+ignoreWhiteSpace = true
+ignoreWithElementOrder = true
+ignoreWithEncryption = false
+ignoreWithNoCheck = true
+
+[redgateCompare.sqlserver.data.options.mapping]
+includeTimestampColumns = false
+useCaseSensitiveObjectDefinition = true
+
+[redgateCompare.sqlserver.data.options.comparison]
+compressTemporaryFiles = false
+forceBinaryCollation = false
+treatEmptyStringAsNull = false
+trimTrailingWhiteSpace = false
+useChecksumComparison = false
+useMaxPrecisionForFloatComparison = false
+
+[redgateCompare.sqlserver.data.options.deployment]
+disableDdlTriggers = true
+disableDmlTriggers = false
+disableForeignKeys = false
+dontIncludeCommentsInScript = false
+dropPrimaryKeysIndexesAndUniqueConstraints = false
+reseedIdentityColumns = false
+skipIntegrityChecksForForeignKeys = false
+transportClrDataTypesAsBinary = false
+useExistenceChecks = false
+
+[environments.CL1Aprod]
+url = "jdbc:sqlserver://localhost;databaseName=CoreInData_A;encrypt=mandatory;integratedSecurity=true;trustServerCertificate=true"
+displayName = "Client 1, ANode"
+
+[environments.CL1Bprod]
+url = "jdbc:sqlserver://localhost;databaseName=CoreInData_B;encrypt=optional;integratedSecurity=true;trustServerCertificate=true"
+displayName = "Client 1, BNode"
+
+[environments.Check]
+url = "jdbc:sqlserver://localhost;databaseName=CoreInCheck;encrypt=optional;integratedSecurity=true;trustServerCertificate=true"
+displayName = "Production Check Node"
+provisioner = "create-database"
+
+[environments.RGAprod]
+url = "jdbc:sqlserver://localhost;databaseName=Redgate_CoreInData_NodeA;encrypt=mandatory;integratedSecurity=true;trustServerCertificate=true"
+displayName = "RG A Node"
+
+[environments.RGBprod]
+url = "jdbc:sqlserver://localhost;databaseName=Redgate_CoreInData_NodeB;encrypt=optional;integratedSecurity=true;trustServerCertificate=true"
+displayName = "RG B Node"

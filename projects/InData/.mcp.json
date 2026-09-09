@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "flyway-indata": {
+      "type": "stdio",
+      "command": "flyway",
+      "args": ["mcp", "-mcp.toolsets=develop_migrations"]
+    }
+  }
+}

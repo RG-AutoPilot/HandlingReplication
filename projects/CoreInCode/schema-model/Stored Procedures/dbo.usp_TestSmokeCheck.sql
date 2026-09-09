@@ -1,0 +1,13 @@
+SET QUOTED_IDENTIFIER OFF
+GO
+SET ANSI_NULLS ON
+GO
+CREATE PROCEDURE [dbo].[usp_TestSmokeCheck]
+    @Marker NVARCHAR(20) = 'smoke'
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT @Marker AS Marker, SYSUTCDATETIME() AS RunAt;
+END
+
+GO

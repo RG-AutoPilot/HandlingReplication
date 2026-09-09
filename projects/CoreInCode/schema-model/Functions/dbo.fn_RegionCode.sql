@@ -1,0 +1,14 @@
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
+CREATE FUNCTION [dbo].[fn_RegionCode](@RegionId INT)
+RETURNS NVARCHAR(10)
+AS
+BEGIN
+    DECLARE @Result NVARCHAR(10) = N'';
+    -- Placeholder logic only.
+    RETURN @Result;
+END
+
+GO

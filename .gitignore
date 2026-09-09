@@ -1,0 +1,4 @@
+# Unified check reports written by Release.ps1 (RELEASE_REPORTS_ROOT).
+# Per-project reports/ folders are still ignored by their own .gitignore
+# for standalone (double-clicked) script runs.
+reports/
