@@ -146,3 +146,17 @@ displayName = "RG A Node"
 [environments.RGBprod]
 url = "jdbc:sqlserver://localhost;databaseName=Redgate_CoreInData_NodeB;encrypt=optional;integratedSecurity=true;trustServerCertificate=true"
 displayName = "RG B Node"
+
+
+[environments.CL3AProd]
+url = "jdbc:sqlserver://localhost;databaseName=CoreInData_A;encrypt=mandatory;integratedSecurity=true;trustServerCertificate=true"
+displayName = "NEW Client 1, ANode"
+
+[environments.CL3Aprod.flyway]
+locations = ["filesystem:migrations/ReplTables","filesystem:migrations/NonReplTables"]
+
+[environments.CL3Bprod]
+url = "jdbc:sqlserver://localhost;databaseName=CoreInData_B;encrypt=optional;integratedSecurity=true;trustServerCertificate=true"
+displayName = "NEW Client 1, BNode"
+[environments.CL3Bprod.flyway]
+locations = ["filesystem:migrations/NonReplTables"]
